@@ -683,7 +683,7 @@ namespace Skk {
                 }
                 return true;
             }
-            else if (command == "commit") {
+            else if (command == "commit" || command == "commit-unhandled") {
                 state.output.assign (state.abbrev.str);
                 state.reset ();
                 return true;
