@@ -698,10 +698,15 @@ namespace Skk {
                 }
                 return true;
             }
-            else if (command == "commit" || command == "commit-unhandled") {
+            else if (command == "commit") {
                 state.output.assign (state.abbrev.str);
                 state.reset ();
                 return true;
+            }
+	    else if (command == "commit-unhandled") {
+                state.output.assign (state.abbrev.str);
+                state.reset ();
+                return state.egg_like_newline;
             }
 	    else if(command == "paste") {
 		string clipboard_text = state.get_clipboard_text ({"libskk","paste"});
