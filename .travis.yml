@@ -21,7 +21,6 @@ before_install:
   - docker exec $CONTAINER dnf -y builddep libskk
   - docker exec $CONTAINER dnf -y install gettext-devel libtool make which
   - docker exec $CONTAINER dnf -y install gcc redhat-rpm-config
-  - docker exec $CONTAINER dnf -y install libasan libubsan
   - docker exec $CONTAINER dnf -y install vala vala-devel
   - docker exec $CONTAINER dnf -y install gnome-common
   - docker exec $CONTAINER dnf -y install python-pip
@@ -39,4 +38,4 @@ script:
 
 after_success:
   - docker exec $CONTAINER pip install cpp-coveralls
-  - docker exec $CONTAINER coveralls --exclude lib --exclude tests --gcov-options '\-lp'
+  - docker exec $CONTAINER coveralls --exclude tools --exclude tests --gcov-options '\-lp'
