@@ -1,42 +1,47 @@
 sudo: required
-
 language: c
-
 env:
+  matrix:
   - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64"
-  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'"
-  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'"
-
+  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common
+    -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE'
+    LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'"
+  - BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=undefined -g
+    -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE'
+    LDFLAGS='-fsanitize=undefined -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'"
+  global:
+    secure: Dw/r5LVveKgrTEWHwsVWtqi0HmXBpGsuayqWSKvAxd5IXcmAGFH1Wt1lKt5X7RviciisoMgUneHllDAh46wnpaWOPg9jN+CUkvk1moM9EI4ZnpFR+wuc775OSERkXCc7wPAavexwXBHOfNkTMBXDZi3awWp1HyWWj1th6NvhEc5Nf6j1AhyiiblubUY3wGZw59CHNMIaiginIKFumAYihDVUdXnCcy1dU/C3uzeoCvV8k/uIscWQskhrU/TstngGSX/3s89Lbz3axHwtrvaAW1HWacADHuXnddBCljCzO2Fw4um7J0WsU6kKLPBbC5+pfv//3FT3zlmLuacYgdIErQBChhNrN5nmOQyhyTSGRwofX0N+yATK1ngWmAP7XVNTOKjbZKxRqC6y63QTsb2QJVRH6b3WQN/WJdpu1EMcIa6+04HWBN25K/7sdBsVbwZVJWt1P3W2DB2z1szcQ87KUxtKOqbUJEK+cmuw6sTdA+db/6Mmuc+OJ43/yuvoy/5Yk8kp8dpa9PvYdQb7A8bfkZUNEfupP4h6r2jmhjpnglE0uyEKNZKoLgoiQ1J37sL5VR3jFrfPWCs/wlhr8ITknj1ORq0n0N+3fvenGAoC+pdMgV3zgLwYpxWCO9aeQPRAIjvKxT5pCBfGD0sfpCbjFOAlcgc4JS/XWe1gAr3AR0c=
 matrix:
   allow_failures:
-    - env: BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE' LIBS='-ldl -lpthread'"
-
+  - env: BUILD_OPTS="--prefix=/usr --libdir=/usr/lib64 CFLAGS='-fsanitize=address
+      -g -fno-common -U_FORTIFY_SOURCE' CXXFLAGS='-fsanitize=address -g -fno-common
+      -U_FORTIFY_SOURCE' LDFLAGS='-fsanitize=address -g -fno-common -U_FORTIFY_SOURCE'
+      LIBS='-ldl -lpthread'"
 services:
-  - docker
-
+- docker
 before_install:
-  - docker pull fedora
-  - export CONTAINER=$(docker run -d fedora sleep 1800)
-  - docker exec $CONTAINER dnf -y install 'dnf-command(builddep)'
-  - docker exec $CONTAINER dnf -y builddep libskk
-  - docker exec $CONTAINER dnf -y install libtool make which
-  - docker exec $CONTAINER dnf -y install gcc-c++
-  - docker exec $CONTAINER dnf -y install libubsan
-  - docker exec $CONTAINER dnf -y install vala vala-devel
-  - docker exec $CONTAINER dnf -y install gnome-common
-  - docker exec $CONTAINER dnf -y install python-pip
-  - docker exec $CONTAINER dnf -y install gtk3-devel git
-  - docker exec $CONTAINER useradd user
-
+- docker pull fedora
+- export CONTAINER=$(docker run -d fedora sleep 1800)
+- docker exec $CONTAINER dnf -y install 'dnf-command(builddep)'
+- docker exec $CONTAINER dnf -y builddep libskk
+- docker exec $CONTAINER dnf -y install libtool make which
+- docker exec $CONTAINER dnf -y install gcc-c++
+- docker exec $CONTAINER dnf -y install libubsan
+- docker exec $CONTAINER dnf -y install vala vala-devel
+- docker exec $CONTAINER dnf -y install gnome-common
+- docker exec $CONTAINER dnf -y install python-pip
+- docker exec $CONTAINER dnf -y install gtk3-devel git
+- docker exec $CONTAINER useradd user
 install:
-  - docker cp . $CONTAINER:/srcdir
-  - docker exec $CONTAINER chown -R user /srcdir
-
+- docker cp . $CONTAINER:/srcdir
+- docker exec $CONTAINER chown -R user /srcdir
 script:
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && NOCONFIGURE=1 ./autogen.sh"
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && ./configure --enable-code-coverage $BUILD_OPTS"
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libskk.pot && make check V=1"
-
+- docker exec $CONTAINER su - user sh -c "cd /srcdir && NOCONFIGURE=1 ./autogen.sh"
+- docker exec $CONTAINER su - user sh -c "cd /srcdir && ./configure --enable-code-coverage
+  $BUILD_OPTS"
+- docker exec $CONTAINER su - user sh -c "cd /srcdir && make V=1 && touch po/libskk.pot
+  && make check V=1"
 after_success:
-  - docker exec $CONTAINER pip install cpp-coveralls
-  - docker exec $CONTAINER su - user sh -c "cd /srcdir && coveralls --exclude tools --exclude tests --gcov-options '\-lp'"
+- docker exec $CONTAINER pip install cpp-coveralls
+- docker exec $CONTAINER su - user sh -c "cd /srcdir && coveralls --exclude tools
+  --exclude tests --gcov-options '\-lp'"
